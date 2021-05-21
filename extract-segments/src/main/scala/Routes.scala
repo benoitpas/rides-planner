@@ -10,17 +10,10 @@ object Point:
 case class Bound(minlat: Double,minlon: Double,maxlat: Double,maxlon: Double):
   def area = (maxlon - minlon) * (maxlat-minlat)
   def overlap(that:Bound) = 
-    val (iMinLat,iMaxLat) = if (this.minlat < that.maxlat || that.minlat < this.maxlat) 
-      (math.max(this.minlat, that.minlat), math.min(this.maxlat, that.maxlat))
-    else 
-      (0.0,0.0)
-
-    val (iMinLon,iMaxLon) = if (this.minlon < that.maxlon || that.minlon < this.maxlon) 
-      (math.max(this.minlon, that.minlon), math.min(this.maxlon, that.maxlon))
-    else 
-      (0.0, 0.0)
-    val w = iMaxLon - iMinLon
-    val h = iMaxLat - iMinLat
+    val (iMinLat,iMaxLat) = (math.max(this.minlat, that.minlat), math.min(this.maxlat, that.maxlat))
+    val (iMinLon,iMaxLon) = (math.max(this.minlon, that.minlon), math.min(this.maxlon, that.maxlon))
+    val w = if (iMaxLon > iMinLon) then iMaxLon - iMinLon else 0
+    val h = if (iMaxLat > iMinLat) then iMaxLat - iMinLat else 0
     (w * h) / (this.area + that.area) * 2
 
 object Bound:
