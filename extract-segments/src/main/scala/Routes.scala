@@ -24,7 +24,15 @@ object Bounds:
     val maxlon = (xml \@ "maxlon").toDouble
     Bounds(minlat, minlon, maxlat, maxlon)
 
-case class Segment(bounds: Bounds, points: Seq[Point])
+case class Segment(bounds: Bounds, points: Seq[Point])/*:
+  def nonOverlapping = {
+    def loop(p:Point, r:Seq[Point]) = 
+    points match {
+      case Nil => this
+      case p::r => loop(p,r)
+    }
+  }*/
+
 
 object Segment:
   def fromFile(filename: String) =
@@ -36,3 +44,21 @@ object Segment:
       Point.fromXML(point)
     }
     Segment(bounds,points)
+
+  def findCoef(p1: Point, p2: Point)  = 
+    val rate = (p1.lat - p2.lat) / (p1.lon - p2.lon)
+    val lat0 = ((p1.lat + p2.lat) - rate * (p1.lon + p2.lon)) / 2
+    (lat0, rate)
+
+  def intersect(s1:(Point,Point), s2:(Point,Point)) = 
+    val (lat01, rate1) = findCoef(s1._1, s1._2)
+    val (lat02, rate2) = findCoef(s2._1, s2._2)
+    val sign1 = Math.signum(- s1._1.lat + rate2 * s1._1.lon + lat02)
+    val sign2 = Math.signum(- s1._2.lat + rate2 * s1._2.lon + lat02)
+    if ( sign1 * sign2 < 0) {
+      val iLon = (lat01 - lat02) / (rate2 - rate1)
+      val iLat = ((rate1+rate2) * iLon + lat01 + lat02) / 2
+      Some(Point(iLat,iLon))
+    } else {
+      None
+    }

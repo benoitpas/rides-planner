@@ -17,5 +17,18 @@ class RoutesTest:
     assertEquals(0.1, b2.overlap(b1), 2)
 
   @Test def b3b4(): Unit = 
-    println(b3.overlap(b4))
     assertEquals(0, b3.overlap(b4), 0)
+
+  val a = Point(2,1)
+  val b = Point(5,4)
+  val c = Point(6,2)
+  val d = Point(2,3)
+
+  @Test def intersectIn() =
+    val p = Segment.intersect((a,b), (c,d)).getOrElse(Point(0,0))
+    val e = Point(3.6, 2.6)
+    assertEquals(e.lat, p.lat, 0.00001)
+    assertEquals(e.lon, p.lon, 0.00001)
+
+  @Test def intersectOut() =
+    assertEquals(None, Segment.intersect((a,c), (b,d)))
