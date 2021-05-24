@@ -22,13 +22,30 @@ class RoutesTest:
   val a = Point(2,1)
   val b = Point(5,4)
   val c = Point(6,2)
-  val d = Point(2,3)
+  val d = Point(0,4)
+
+  val i = Point(3.75, 2.75)
 
   @Test def intersectIn() =
     val p = Segment.intersect((a,b), (c,d)).getOrElse(Point(0,0))
-    val e = Point(3.6, 2.6)
-    assertEquals(e.lat, p.lat, 0.00001)
-    assertEquals(e.lon, p.lon, 0.00001)
+    assertEquals(i, p)
 
   @Test def intersectOut() =
     assertEquals(None, Segment.intersect((a,c), (b,d)))
+
+  val e = Point(0,0)
+
+  @Test def noIntersection =
+    val noIntersectSeg = Segment(Bounds(0,0,0,0), List(a,d,b,c,e))
+    val r = noIntersectSeg.nonOverlapping
+    assertEquals(List(noIntersectSeg.points.reverse), r)
+
+  @Test def intersectingSegment1 =
+    val noIntersectSeg = Segment(Bounds(0,0,0,0), List(a,b,c,d,e))
+    val r = noIntersectSeg.nonOverlapping
+    assertEquals(List(List(e,d,i), List(i,c,b,i), List(i, a)), r)
+
+  @Test def intersectingSegment2 =
+    val noIntersectSeg = Segment(Bounds(0,0,0,0), List(e,a,b,c,d))
+    val r = noIntersectSeg.nonOverlapping
+    assertEquals(List(List(d,i), List(i,c,b,i), List(i, a, e)), r)
