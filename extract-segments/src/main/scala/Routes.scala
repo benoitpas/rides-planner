@@ -74,13 +74,13 @@ object Segment:
         }
       }
 
-     next(points)/* match {
-      case List(l) => {
-        val n2 = next(l.tail)
-        (n2.init ++ (l.head::n2.last))
+     next(points) match {
+      case List(_) => {
+        val n2 = next(points.tail)
+        n2.init :+ (n2.last :+ points.head)
       }
       case r => {
         r
       }
-    }*/
+    }
   }
