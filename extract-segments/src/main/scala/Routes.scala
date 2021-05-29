@@ -84,3 +84,25 @@ object Segment:
       }
     }
   }
+
+  // return 'true' if p is is in the segment
+  def in(p:Point, segment: List[Point], threshold: Double) = {
+    import scala.math.pow
+    // Only valid for points which are close but good enough for our purpose
+    def distance(p1:Point) = pow(p.lat-p1.lat,2) + pow(p.lon-p1.lon,2)
+    def closest(p1:Point, p2:Point) = if (distance(p1) < distance(p2)) p1 else p2
+
+    segment match {
+      case _::_ => {
+        val d = distance(segment.reduce(closest))
+        d < threshold
+      }
+      case _ => false
+    }
+
+  }
+
+  // Returns the segments from 'toSplit' which are not in 'reference'
+  def extract(toSplit:List[Point], reference:List[Point]) = {
+    0//toSplit.
+  }

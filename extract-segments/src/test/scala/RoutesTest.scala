@@ -49,3 +49,11 @@ class RoutesTest:
     val intersectSeg = List(e,a,b,c,d)
     val r = Segment.nonOverlapping(intersectSeg)
     assertEquals(List(List(d,i), List(i,c,b,i), List(i, a, e)), r)
+
+  @Test def inSegment =
+    val s = List(e,d,b,c) //a
+    assertTrue(Segment.in(a, s, 10))
+
+  @Test def outSeqment =
+    val s = List(e,a,d) //c
+    assertFalse(Segment.in(c, s, 10))
