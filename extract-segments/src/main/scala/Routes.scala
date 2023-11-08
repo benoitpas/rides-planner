@@ -23,19 +23,21 @@ object Bounds:
     val maxlat = (xml \@ "maxlat").toDouble
     val maxlon = (xml \@ "maxlon").toDouble
     Bounds(minlat, minlon, maxlat, maxlon)
+  def fromPoints(points: List[Point]) =
+    Bounds(0,0,0,0)
 
 case class Segment(bounds: Bounds, points: List[Point])
 
 object Segment:
   def fromFile(filename: String) =
     val doc = scala.xml.XML.loadFile(filename)
-    val bounds = Bounds.fromXML((doc \\ "bounds")(0))
-    val points = for {
+    val points = (for {
       point  <- doc \\ "trkpt"
     } yield {
       Point.fromXML(point)
-    }
-    Segment(bounds,points.toList)
+    }).toList
+    val bounds = Bounds.fromPoints(points)
+    Segment(bounds,points)
 
   def findCoef(p1: Point, p2: Point)  = 
     val rate = (p1.lat - p2.lat) / (p1.lon - p2.lon)

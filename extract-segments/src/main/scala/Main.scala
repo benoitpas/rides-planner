@@ -4,7 +4,7 @@ def processFile(filename: String) =
  
 def main(args:Array[String]): Unit = 
   if (args.length < 1) {
-    println("The command takes as arguments the path of a gpx files.")
+    println("The command takes as arguments the path of gpx files.")
   } else {
     val routes = args.map(Segment.fromFile).toSeq
     val overlap = for {
