@@ -57,3 +57,7 @@ class RoutesTest:
   @Test def outSeqment =
     val s = List(e,a,d) //c
     assertFalse(Segment.in(c, s, 10))
+
+  @Test def boundsFromPoints =
+    val points = List(a,b,c,d,i)
+    assertEquals(Bounds(0,1,6,4), Bounds.fromPoints(points))

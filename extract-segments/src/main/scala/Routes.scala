@@ -24,7 +24,11 @@ object Bounds:
     val maxlon = (xml \@ "maxlon").toDouble
     Bounds(minlat, minlon, maxlat, maxlon)
   def fromPoints(points: List[Point]) =
-    Bounds(0,0,0,0)
+    val minLat = points.map(_.lat).reduce(math.min)
+    val maxLat = points.map(_.lat).reduce(math.max)
+    val minLon = points.map(_.lon).reduce(math.min)
+    val maxLon = points.map(_.lon).reduce(math.max)
+    Bounds(minLat, minLon, maxLat, maxLon)
 
 case class Segment(bounds: Bounds, points: List[Point])
 
