@@ -4,12 +4,14 @@ def processFile(filename: String) =
  
 def main(args:Array[String]): Unit = 
   if (args.length < 1) {
-    println("The command takes as arguments the path of gpx files.")
+    println("The command takes as arguments the path of 2 gpx files.")
   } else {
     val routes = args.map(Segment.fromFile).toSeq
-    val overlap = for {
-      r1 <- routes
-      r2 <- routes
-    } yield (r1._1,r2._1, r1._1.overlap(r2._1))
-    println(overlap.filter(_._3<0))
+    val route1 = routes.head
+    val route2 = routes.tail.head
+    println(s"overlap between the 2 routes:${route1._1.overlap(route2._1)}")
+    for(p <- route1._2)
+      val pc = route2.findClosest(p)
+      println(s"${p}\t${pc}")
+
   }

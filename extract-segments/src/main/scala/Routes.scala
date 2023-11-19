@@ -1,5 +1,11 @@
 
-case class Point(lat: Double, lon: Double)
+case class Point(lat: Double, lon: Double):
+  // We're only interested in precise distance when the points are closed
+  // Also we'll need to better handle the lattitude for routes which are closer to the poles
+  def distance(that:Point) =
+    val latDiff = this.lat - that.lat
+    val lonDiff = this.lon - that.lon
+    latDiff*latDiff + lonDiff*lonDiff
 
 object Point:
   def fromXML(xml: scala.xml.Node) =
@@ -30,7 +36,15 @@ object Bounds:
     val maxLon = points.map(_.lon).reduce(math.max)
     Bounds(minLat, minLon, maxLat, maxLon)
 
-case class Segment(bounds: Bounds, points: List[Point])
+case class Segment(bounds: Bounds, points: List[Point]):
+  def findClosest(p: Point) =
+    points.map(p2 => (p2.distance(p), p2)).sortBy(_._1).head
+
+  def distances(that: Segment) =
+    if bounds.overlap(that.bounds) > 0 then
+      List(0)
+    else
+      List(0)
 
 object Segment:
   def fromFile(filename: String) =
