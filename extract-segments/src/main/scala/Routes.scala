@@ -46,6 +46,26 @@ case class Segment(bounds: Bounds, points: List[Point]):
     else
       List(0)
 
+  def extractSegments(that: Segment) : (Set[Segment], Set[Segment]) =
+    if this._1.overlap(that._1) == 0 then
+      (Set(),Set(this))
+    else
+      case class State(ol_seg:Set[Segment], ol_points:List[Point], nol_seg:Set[Segment], nol_points:List[Point])
+
+      def next(s:State, p:Point):State =
+        val pc = that.findClosest(p)
+        val isClose = pc._1 < 1e-7
+        (isClose, s.ol_points,s.nol_points) match
+          case (false, List(), _) => State(s.ol_seg,s.ol_points, s.nol_seg,p::s.nol_points)
+          case (false, _, _) => State(s.ol_seg + Segment.fromPoints(s.ol_points),List(), s.nol_seg,List(p))
+          case (true,  _, List()) => State(s.ol_seg,p::s.ol_points, s.nol_seg,s.nol_points)
+          case (true,  _, _) => State(s.ol_seg,List(p), s.nol_seg + Segment.fromPoints(s.nol_points),List())
+
+      val r = this._2.foldLeft(State(Set(),List(),Set(),List()))(next)
+      val ol_seg = Segment.addToSet(r.ol_points, r.ol_seg)
+      val nol_seg = Segment.addToSet(r.nol_points, r.nol_seg)
+      (ol_seg, nol_seg)
+
 object Segment:
   def fromFile(filename: String) =
     val doc = scala.xml.XML.loadFile(filename)
@@ -56,6 +76,10 @@ object Segment:
     }).toList
     val bounds = Bounds.fromPoints(points)
     Segment(bounds,points)
+
+  def fromPoints(points:List[Point]) =
+    val bounds = Bounds.fromPoints(points)
+    Segment(bounds, points)
 
   def findCoef(p1: Point, p2: Point)  = 
     val rate = (p1.lat - p2.lat) / (p1.lon - p2.lon)
@@ -126,3 +150,8 @@ object Segment:
   def extract(toSplit:List[Point], reference:List[Point]) = {
     0//toSplit.
   }
+
+  def addToSet(points:List[Point], segments:Set[Segment]) =
+    points match
+      case List() => segments
+      case _ => segments+ Segment.fromPoints(points)

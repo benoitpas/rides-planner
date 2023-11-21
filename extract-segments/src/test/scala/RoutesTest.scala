@@ -61,3 +61,10 @@ class RoutesTest:
   @Test def boundsFromPoints =
     val points = List(a,b,c,d,i)
     assertEquals(Bounds(0,1,6,4), Bounds.fromPoints(points))
+
+  @Test def extractSegments = 
+    val route1 = Segment.fromFile("src/test/resources/Gerrards_Cross_Harrow.gpx")
+    val route2 = Segment.fromFile("src/test/resources/Greenford_Chalfont_St_Giles.gpx")
+    val (ol_seg,nol_seg) = route1.extractSegments(route2)
+    assertEquals(2, ol_seg.size)
+    assertEquals(3, nol_seg.size)
