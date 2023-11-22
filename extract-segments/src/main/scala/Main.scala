@@ -16,8 +16,8 @@ def main(args:Array[String]): Unit =
     case class State(ol_seg:Set[Segment], ol_points:List[Point], nol_seg:Set[Segment], nol_points:List[Point])
 
     def next(s:State, p:Point):State =
-      val pc = route2.findClosest(p)
-      val isClose = pc._1 < 1e-7
+      val pc = route2.findClosestDistance(p)
+      val isClose = pc < 1e-7
       (isClose, s.ol_points,s.nol_points) match
         case (false, List(), _) => State(s.ol_seg,s.ol_points, s.nol_seg,p::s.nol_points)
         case (false, _, _) => State(s.ol_seg + Segment.fromPoints(s.ol_points),List(), s.nol_seg,List(p))
@@ -25,8 +25,8 @@ def main(args:Array[String]): Unit =
         case (true,  _, _) => State(s.ol_seg,List(p), s.nol_seg + Segment.fromPoints(s.nol_points),List())
 
     for(p <- route1._2)
-      val pc = route2.findClosest(p)
-      println(s"${p}\t${pc._1 < 1e-7}\t${pc}")
+      val pc = route2.findClosestDistance(p)
+      println(s"${p}\t${pc < 1e-7}\t${pc}")
 
     val r = route1._2.foldLeft(State(Set(),List(),Set(),List()))(next)
     val ol_seg = Segment.addToSet(r.ol_points, r.ol_seg)

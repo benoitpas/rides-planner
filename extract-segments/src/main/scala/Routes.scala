@@ -37,8 +37,8 @@ object Bounds:
     Bounds(minLat, minLon, maxLat, maxLon)
 
 case class Segment(bounds: Bounds, points: List[Point]):
-  def findClosest(p: Point) =
-    points.map(p2 => (p2.distance(p), p2)).sortBy(_._1).head
+  def findClosestDistance(p: Point) =
+    points.map(_.distance(p)).sorted.head
 
   def distances(that: Segment) =
     if bounds.overlap(that.bounds) > 0 then
@@ -53,8 +53,8 @@ case class Segment(bounds: Bounds, points: List[Point]):
       case class State(ol_seg:Set[Segment], ol_points:List[Point], nol_seg:Set[Segment], nol_points:List[Point])
 
       def next(s:State, p:Point):State =
-        val pc = that.findClosest(p)
-        val isClose = pc._1 < 1e-7
+        val pc = that.findClosestDistance(p)
+        val isClose = pc < 1e-7
         (isClose, s.ol_points,s.nol_points) match
           case (false, List(), _) => State(s.ol_seg,s.ol_points, s.nol_seg,p::s.nol_points)
           case (false, _, _) => State(s.ol_seg + Segment.fromPoints(s.ol_points),List(), s.nol_seg,List(p))
