@@ -64,7 +64,10 @@ class RoutesTest:
 
   @Test def extractSegments = 
     val route1 = Segment.fromFile("src/test/resources/Gerrards_Cross_Harrow.gpx")
+    assertEquals(661, route1._2.size)
     val route2 = Segment.fromFile("src/test/resources/Greenford_Chalfont_St_Giles.gpx")
     val (ol_seg,nol_seg) = route1.extractSegments(route2)
     assertEquals(2, ol_seg.size)
     assertEquals(3, nol_seg.size)
+    assertEquals(Set(60,90), ol_seg.map(_._2.size))
+    assertEquals(Set(154,1,356), nol_seg.map(_._2.size))
