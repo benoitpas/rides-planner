@@ -71,3 +71,15 @@ class RoutesTest:
     assertEquals(3, nol_seg.size)
     assertEquals(Set(60,90), ol_seg.map(_._2.size))
     assertEquals(Set(154,1,356), nol_seg.map(_._2.size))
+
+  @Test def distanceToSegment1 =
+    val a = Point( 1, 1)
+    val b = Point(-1,-1)
+    val c = Point( 1,-1)
+    assertEquals(2, c.distance(a,b),0.001)
+
+  @Test def distanceToSegment2 =
+    val a = Point(-2,3)
+    val b = Point( 5,11)
+    val c = Point( 3,5)
+    assertEquals(18.0973, c.distance(a,b),0.001)

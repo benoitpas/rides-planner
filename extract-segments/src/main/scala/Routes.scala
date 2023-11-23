@@ -2,10 +2,27 @@
 case class Point(lat: Double, lon: Double):
   // We're only interested in precise distance when the points are closed
   // Also we'll need to better handle the lattitude for routes which are closer to the poles
-  def distance(that:Point) =
+  // Point to point distance
+  def distance(that:Point) : Double =
     val latDiff = this.lat - that.lat
     val lonDiff = this.lon - that.lon
     latDiff*latDiff + lonDiff*lonDiff
+
+  // Point to segment distance
+  def distance(p1:Point, p2:Point) : Double =
+    def default = math.min(this.distance(p1), this.distance(p2))
+    if (p1.lat == p2.lat) && ((p1.lon < p2.lon && p1.lon<=lon && lon <=p2.lon) || (p2.lon < p1.lon && p2.lon <= lon && lon <= p1.lon))then
+      lat
+    else if (p1.lon == p2.lon) && ((p1.lat < p2.lat && p1.lat <= lat && lat <= p2.lat) || (p2.lat < p1.lat && p2.lat < lat && lat< p1.lat)) then
+      lon
+    else
+      val m = (p2.lat-p1.lat)/(p2.lon-p1.lon)
+      val iLon = (m*m*p1.lon + m*(lon-p1.lon)+lat)/(1+m*m)
+      val iLat = m*(iLon-p1.lon)+p1.lat
+      if (math.min(p1.lat,p2.lat) <= iLat && iLat <= math.max(p1.lat,p2.lat) && math.min(p1.lon,p2.lon) <= iLon && iLon <=math.max(p1.lon,p2.lon)) then
+        this.distance(Point(iLat,iLon))
+        else
+          default
 
 object Point:
   def fromXML(xml: scala.xml.Node) =
