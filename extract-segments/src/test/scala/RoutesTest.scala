@@ -62,24 +62,39 @@ class RoutesTest:
     val points = List(a,b,c,d,i)
     assertEquals(Bounds(0,1,6,4), Bounds.fromPoints(points))
 
-  @Test def extractSegments = 
-    val route1 = Segment.fromFile("src/test/resources/Gerrards_Cross_Harrow.gpx")
-    assertEquals(661, route1._2.size)
-    val route2 = Segment.fromFile("src/test/resources/Greenford_Chalfont_St_Giles.gpx")
-    val (ol_seg,nol_seg) = route1.extractSegments(route2)
+  val routeGCH = Segment.fromFile("src/test/resources/Gerrards_Cross_Harrow.gpx")
+  val routeGCG = Segment.fromFile("src/test/resources/Greenford_Chalfont_St_Giles.gpx")
+  val routeGCG2 = Segment.fromFile("src/test/resources/Greenford_Chalfont_St_Giles2.gpx")
+
+  @Test def extractSegments1 = 
+    assertEquals(661, routeGCH._2.size)
+    val (ol_seg,nol_seg) = routeGCH.extractSegments(routeGCG)
     assertEquals(2, ol_seg.size)
     assertEquals(3, nol_seg.size)
     assertEquals(Set(60,90), ol_seg.map(_._2.size))
     assertEquals(Set(154,1,356), nol_seg.map(_._2.size))
+
+  @Test def extractSegments2 =
+    assertEquals(593, routeGCG._2.size)
+    assertEquals(1853, routeGCG2._2.size)
+    val (ol_seg,nol_seg) = routeGCG.extractSegments(routeGCG2)
+    assertEquals(3, ol_seg.size)
+    assertEquals(4, nol_seg.size)
+    assertEquals(Set(3,33,5), ol_seg.map(_._2.size))
+    assertEquals(Set(48,224,1,279), nol_seg.map(_._2.size))
 
   @Test def distanceToSegment1 =
     val a = Point( 1, 1)
     val b = Point(-1,-1)
     val c = Point( 1,-1)
     assertEquals(2, c.distance(a,b),0.001)
+    assertEquals(4, c.distance(a),0.001)
+    assertEquals(4, c.distance(b),0.001)
 
   @Test def distanceToSegment2 =
     val a = Point(-2,3)
     val b = Point( 5,11)
     val c = Point( 3,5)
     assertEquals(18.0973, c.distance(a,b),0.001)
+    assertEquals(29.0, c.distance(a),0.001)
+    assertEquals(40.0, c.distance(b),0.001)

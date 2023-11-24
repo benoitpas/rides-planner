@@ -12,9 +12,9 @@ case class Point(lat: Double, lon: Double):
   def distance(p1:Point, p2:Point) : Double =
     def default = math.min(this.distance(p1), this.distance(p2))
     if (p1.lat == p2.lat) && ((p1.lon < p2.lon && p1.lon<=lon && lon <=p2.lon) || (p2.lon < p1.lon && p2.lon <= lon && lon <= p1.lon))then
-      lat
+      lat*lat
     else if (p1.lon == p2.lon) && ((p1.lat < p2.lat && p1.lat <= lat && lat <= p2.lat) || (p2.lat < p1.lat && p2.lat < lat && lat< p1.lat)) then
-      lon
+      lon*lon
     else
       val m = (p2.lat-p1.lat)/(p2.lon-p1.lon)
       val iLon = (m*m*p1.lon + m*(lon-p1.lon)+lat)/(1+m*m)
@@ -56,6 +56,10 @@ object Bounds:
 case class Segment(bounds: Bounds, points: List[Point]):
   def findClosestDistance(p: Point) =
     points.map(_.distance(p)).sorted.head
+
+  def findClosestDistanceSeq(p: Point) = 
+    val seqs = points.zip(points.tail)
+    seqs.map((p1,p2) => p.distance(p1,p2)).sorted.head
 
   def distances(that: Segment) =
     if bounds.overlap(that.bounds) > 0 then
