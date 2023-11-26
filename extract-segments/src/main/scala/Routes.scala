@@ -7,6 +7,20 @@ case class Point(lat: Double, lon: Double):
     val lonDiff = this.lon - that.lon
     latDiff * latDiff + lonDiff * lonDiff
 
+  def haversineDistance(that: Point): Double =
+    val R = 6371e3; // metres
+    val phi1 = this.lat * Math.PI / 180; // φ, λ in radians
+    val phi2 = that.lat * Math.PI / 180;
+    val dPhi = (that.lat - this.lat) * Math.PI / 180;
+    val dLambda = (that.lon - this.lon) * Math.PI / 180;
+
+    val a = Math.sin(dPhi / 2) * Math.sin(dPhi / 2) +
+      Math.cos(phi1) * Math.cos(phi2) *
+      Math.sin(dLambda / 2) * Math.sin(dLambda / 2);
+    val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    R * c; // in metres
+
   // Point to segment distance
   def distance(p1: Point, p2: Point): Double =
     def default = math.min(this.distance(p1), this.distance(p2))

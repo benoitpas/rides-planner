@@ -86,6 +86,22 @@ class RoutesTest:
     assertEquals(Set(3, 33, 5), ol_seg.map(_._2.size))
     assertEquals(Set(48, 224, 1, 279), nol_seg.map(_._2.size))
 
+  @Test def haversineDistance1 =
+    val p1 = Point(51.58109, -0.33811)
+    val p2 = Point(51.58105, -0.33792)
+
+    val e = 13.861454334483879
+    assertEquals(e, p1.haversineDistance(p2), 0.0000000001)
+    assertEquals(e, p1.haversineDistance(p2), 0.0000000001)
+
+  @Test def haversineDistance2 =
+    val p1 = Point(51.58109, -0.33811)
+    val p2 = Point(51.58781, -0.55373)
+
+    val e = 14916.367428883348
+    assertEquals(e, p1.haversineDistance(p2), 0.0000000001)
+    assertEquals(e, p1.haversineDistance(p2), 0.0000000001)
+
   @Test def distanceToSegment1 =
     val a = Point(1, 1)
     val b = Point(-1, -1)
