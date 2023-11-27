@@ -74,8 +74,8 @@ class RoutesTest:
     val (ol_seg, nol_seg) = routeGCH.extractSegments(routeGCG)
     assertEquals(2, ol_seg.size)
     assertEquals(3, nol_seg.size)
-    assertEquals(Set(60, 90), ol_seg.map(_._2.size))
-    assertEquals(Set(154, 1, 356), nol_seg.map(_._2.size))
+    assertEquals(Set(60, 89), ol_seg.map(_._2.size))
+    assertEquals(Set(154, 1, 357), nol_seg.map(_._2.size))
 
   @Test def extractSegments2 =
     assertEquals(593, routeGCG._2.size)
@@ -102,18 +102,51 @@ class RoutesTest:
     assertEquals(e, p1.haversineDistance(p2), 0.0000000001)
     assertEquals(e, p1.haversineDistance(p2), 0.0000000001)
 
+  @Test def haversineDistanceLat1Degree =
+    val p1 = Point(51, -1)
+    val p2 = Point(52, -1)
+
+    // 1 degree of latitude in southern england (meters)
+    val e = 111194.92664455874
+    assertEquals(e, p1.haversineDistance(p2), 0.0000000001)
+    assertEquals(e, p1.haversineDistance(p2), 0.0000000001)
+
+  @Test def haversineDistanceLon1Degree =
+    val p1 = Point(51, 0)
+    val p2 = Point(51, -1)
+
+    // 1 degree of latitude in southern england (meters)
+    val e = 69976.69829285977
+    assertEquals(e, p1.haversineDistance(p2), 0.0000000001)
+    assertEquals(e, p1.haversineDistance(p2), 0.0000000001)
+
+  val lat1m = 1/Point.lat1DegSEEngland
+  val lon1m = 1/Point.lon1DegSEEngland
+
   @Test def distanceToSegment1 =
-    val a = Point(1, 1)
-    val b = Point(-1, -1)
-    val c = Point(1, -1)
-    assertEquals(2, c.distance(a, b), 0.001)
-    assertEquals(4, c.distance(a), 0.001)
-    assertEquals(4, c.distance(b), 0.001)
+    val a = Point(51+lat1m, -1+lon1m)
+    val b = Point(51-lat1m, -1-lon1m)
+    val c = Point(51+lat1m, -1-lon1m)
+    assertEquals(math.sqrt(2), c.distance(a, b), 0.4)
+    assertEquals(2, c.distance(a), 0.01)
+    assertEquals(math.sqrt(2), c.distance(b), 0.4)
 
   @Test def distanceToSegment2 =
-    val a = Point(-2, 3)
-    val b = Point(5, 11)
-    val c = Point(3, 5)
-    assertEquals(18.0973, c.distance(a, b), 0.001)
-    assertEquals(29.0, c.distance(a), 0.001)
-    assertEquals(40.0, c.distance(b), 0.001)
+    val a = Point(51-2*lat1m, 3*lon1m)
+    val b = Point(51+5*lat1m, 11*lon1m)
+    val c = Point(51+3*lat1m, 5*lon1m)
+    assertEquals(5.46892, c.distance(a, b), 0.001)
+    assertEquals(5.46892, c.distance(a), 0.001)
+    assertEquals(6.36381, c.distance(b), 0.001)
+
+//  @Test def compareDistance1 : Unit = 
+//    assertEquals(27.894609721234673, math.sqrt(1e-7 * Point.lat1DegSEEngland * Point.lon1DegSEEngland),0.001)
+//
+//    val diffSquared = routeGCG._2.map (p=>
+//      val d = routeGCH.findClosestDistance(p)
+//      val dh = routeGCH.findClosestDistanceHaversine(p)
+//      (d-dh)*(d-dh)
+//    )
+//    val rms = math.sqrt(diffSquared.sum/diffSquared.size)
+//
+//    assertEquals(4.04515, rms,0.0001)

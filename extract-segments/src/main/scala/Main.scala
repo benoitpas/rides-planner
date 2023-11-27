@@ -46,9 +46,10 @@ def main(args: Array[String]): Unit =
           )
 
     for (p <- route1._2)
+      val dh = route2.findClosestDistanceHaversine(p)
       val d = route2.findClosestDistance(p)
       val ds = route2.findClosestDistanceSeq(p)
-      println(s"${p}\t${d}\t${ds}\t${d - ds}")
+      println(s"${p}\t${dh}\t${d}\t${ds}\t${d - ds}")
 
     val r = route1._2.foldLeft(State(Set(), List(), Set(), List()))(next)
     val ol_seg = Segment.addToSet(r.ol_points, r.ol_seg)
