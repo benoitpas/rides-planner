@@ -120,33 +120,33 @@ class RoutesTest:
     assertEquals(e, p1.haversineDistance(p2), 0.0000000001)
     assertEquals(e, p1.haversineDistance(p2), 0.0000000001)
 
-  val lat1m = 1/Point.lat1DegSEEngland
-  val lon1m = 1/Point.lon1DegSEEngland
+  val lat1m = 1 / Point.lat1DegSEEngland
+  val lon1m = 1 / Point.lon1DegSEEngland
 
   @Test def distanceToSegment1 =
-    val a = Point(51+lat1m, -1+lon1m)
-    val b = Point(51-lat1m, -1-lon1m)
-    val c = Point(51+lat1m, -1-lon1m)
+    val a = Point(51 + lat1m, -1 + lon1m)
+    val b = Point(51 - lat1m, -1 - lon1m)
+    val c = Point(51 + lat1m, -1 - lon1m)
     assertEquals(math.sqrt(2), c.distance(a, b), 0.4)
     assertEquals(2, c.distance(a), 0.01)
     assertEquals(math.sqrt(2), c.distance(b), 0.4)
 
   @Test def distanceToSegment2 =
-    val a = Point(51-2*lat1m, 3*lon1m)
-    val b = Point(51+5*lat1m, 11*lon1m)
-    val c = Point(51+3*lat1m, 5*lon1m)
+    val a = Point(51 - 2 * lat1m, 3 * lon1m)
+    val b = Point(51 + 5 * lat1m, 11 * lon1m)
+    val c = Point(51 + 3 * lat1m, 5 * lon1m)
     assertEquals(5.46892, c.distance(a, b), 0.001)
     assertEquals(5.46892, c.distance(a), 0.001)
     assertEquals(6.36381, c.distance(b), 0.001)
 
-//  @Test def compareDistance1 : Unit = 
-//    assertEquals(27.894609721234673, math.sqrt(1e-7 * Point.lat1DegSEEngland * Point.lon1DegSEEngland),0.001)
-//
-//    val diffSquared = routeGCG._2.map (p=>
-//      val d = routeGCH.findClosestDistance(p)
-//      val dh = routeGCH.findClosestDistanceHaversine(p)
-//      (d-dh)*(d-dh)
-//    )
-//    val rms = math.sqrt(diffSquared.sum/diffSquared.size)
-//
-//    assertEquals(4.04515, rms,0.0001)
+  @Test def compareDistance1: Unit =
+    assertEquals(27.894609721234673, math.sqrt(1e-7 * Point.lat1DegSEEngland * Point.lon1DegSEEngland), 0.001)
+
+    val diffSquared = routeGCG._2.map(p =>
+      val d = routeGCH.findClosestDistance(p)
+      val dh = routeGCH.findClosestDistanceHaversine(p)
+      (d - dh) * (d - dh) / d / dh
+    )
+    val rms = math.sqrt(diffSquared.sum / diffSquared.size)
+
+    assertEquals(4.04515, rms, 0.0001)

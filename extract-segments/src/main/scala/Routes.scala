@@ -1,11 +1,12 @@
 case class Point(lat: Double, lon: Double):
   // We're only interested in precise distance when the points are closed
   // Also we'll need to better handle the lattitude for routes which are closer to the poles
+  // (The constants are valid only for southern england)
   // Point to point distance
   def distance(that: Point): Double =
-    val latDiff = this.lat - that.lat
-    val lonDiff = this.lon - that.lon
-    latDiff * latDiff + lonDiff * lonDiff
+    val latDiff = (this.lat - that.lat) * Point.lat1DegSEEngland
+    val lonDiff = (this.lon - that.lon) * Point.lon1DegSEEngland
+    math.sqrt(latDiff * latDiff + lonDiff * lonDiff)
 
   def haversineDistance(that: Point): Double =
     val R = 6371e3; // metres
@@ -42,6 +43,9 @@ case class Point(lat: Double, lon: Double):
       else default
 
 object Point:
+  val lat1DegSEEngland = 111195f
+  val lon1DegSEEngland = 69977f
+
   def fromXML(xml: scala.xml.Node) =
     val lat = (xml \@ "lat").toDouble
     val lon = (xml \@ "lon").toDouble
@@ -78,6 +82,9 @@ object Bounds:
     Bounds(minLat, minLon, maxLat, maxLon)
 
 case class Segment(bounds: Bounds, points: List[Point]):
+  def findClosestDistanceHaversine(p: Point) =
+    points.map(_.haversineDistance(p)).sorted.head
+
   def findClosestDistance(p: Point) =
     points.map(_.distance(p)).sorted.head
 
@@ -101,7 +108,7 @@ case class Segment(bounds: Bounds, points: List[Point]):
 
       def next(s: State, p: Point): State =
         val pc = that.findClosestDistance(p)
-        val isClose = pc < 1e-7
+        val isClose = pc < math.sqrt(1e-7 * Point.lat1DegSEEngland * Point.lon1DegSEEngland)
         (isClose, s.ol_points, s.nol_points) match
           case (false, List(), _) =>
             State(s.ol_seg, s.ol_points, s.nol_seg, p :: s.nol_points)
