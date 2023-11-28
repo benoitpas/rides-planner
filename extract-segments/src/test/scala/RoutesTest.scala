@@ -64,6 +64,8 @@ class RoutesTest:
 
   val routeGCH =
     Segment.fromFile("src/test/resources/Gerrards_Cross_Harrow.gpx")
+  val routeHGC =
+    Segment.fromFile("src/test/resources/Harrow_Gerrards_Cross.gpx")
   val routeGCG =
     Segment.fromFile("src/test/resources/Greenford_Chalfont_St_Giles.gpx")
   val routeGCG2 =
@@ -85,6 +87,15 @@ class RoutesTest:
     assertEquals(4, nol_seg.size)
     assertEquals(Set(3, 33, 5), ol_seg.map(_._2.size))
     assertEquals(Set(48, 224, 1, 279), nol_seg.map(_._2.size))
+
+  @Test def extractSegmentsReverse =
+    assertEquals(661, routeGCH._2.size)
+    assertEquals(660, routeHGC._2.size)
+    val (ol_seg, nol_seg) = routeGCH.extractSegments(routeHGC)
+    assertEquals(3, ol_seg.size)
+    assertEquals(2, nol_seg.size)
+    assertEquals(Set(214, 422, 5), ol_seg.map(_._2.size))
+    assertEquals(Set(1, 19), nol_seg.map(_._2.size))
 
   @Test def haversineDistance1 =
     val p1 = Point(51.58109, -0.33811)
@@ -145,7 +156,7 @@ class RoutesTest:
     val diffSquared = routeGCG._2.map(p =>
       val d = routeGCH.findClosestDistance(p)
       val dh = routeGCH.findClosestDistanceHaversine(p)
-      (d - dh) * (d - dh) / d / dh
+      (d - dh) * (d - dh)
     )
     val rms = math.sqrt(diffSquared.sum / diffSquared.size)
 
