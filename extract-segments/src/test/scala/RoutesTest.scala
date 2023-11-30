@@ -62,14 +62,17 @@ class RoutesTest:
     val points = List(a, b, c, d, i)
     assertEquals(Bounds(0, 1, 6, 4), Bounds.fromPoints(points))
 
+  val resourcesPath = "extract-segments/src/test/resources/"
   val routeGCH =
-    Segment.fromFile("src/test/resources/Gerrards_Cross_Harrow.gpx")
+    Segment.fromFile(resourcesPath + "Gerrards_Cross_Harrow.gpx")
   val routeHGC =
-    Segment.fromFile("src/test/resources/Harrow_Gerrards_Cross.gpx")
+    Segment.fromFile(resourcesPath + "Harrow_Gerrards_Cross.gpx")
   val routeGCG =
-    Segment.fromFile("src/test/resources/Greenford_Chalfont_St_Giles.gpx")
+    Segment.fromFile(resourcesPath + "Greenford_Chalfont_St_Giles.gpx")
   val routeGCG2 =
-    Segment.fromFile("src/test/resources/Greenford_Chalfont_St_Giles2.gpx")
+    Segment.fromFile(resourcesPath + "Greenford_Chalfont_St_Giles2.gpx")
+  val routeEF =
+    Segment.fromFile(resourcesPath + "Ealing_Fulham.gpx")
 
   @Test def extractSegments1 =
     assertEquals(661, routeGCH._2.size)
@@ -96,6 +99,15 @@ class RoutesTest:
     assertEquals(2, nol_seg.size)
     assertEquals(Set(214, 422, 5), ol_seg.map(_._2.size))
     assertEquals(Set(1, 19), nol_seg.map(_._2.size))
+
+  @Test def extractSegmentsNoOverlap =
+    assertEquals(661, routeGCH._2.size)
+    assertEquals(413, routeEF._2.size)
+    val (ol_seg, nol_seg) = routeGCH.extractSegments(routeEF)
+    assertEquals(0, ol_seg.size)
+    assertEquals(1, nol_seg.size)
+    assertEquals(Set(), ol_seg.map(_._2.size))
+    assertEquals(Set(661), nol_seg.map(_._2.size))
 
   @Test def haversineDistance1 =
     val p1 = Point(51.58109, -0.33811)
